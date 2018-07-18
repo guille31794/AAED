@@ -1,0 +1,2 @@
+C:\Users\guill\AppData\Local\Temp\ccbtBmVk.o:main.cpp:(.text+0x3f): undefined reference to `visita(char const*)'
+collect2.exe: error: ld returned 1 exit status
