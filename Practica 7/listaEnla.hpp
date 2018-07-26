@@ -19,8 +19,7 @@ public:
     typedef nodo* posicion; // posición de un elemento
     Lista(); // constructor, requiere ctor. T()
     Lista(const Lista<T>& l); // ctor. de copia, requiere ctor. T()
-    Lista<T>& operator =(const Lista<T>& l); // asignación de
-    listas
+    Lista<T>& operator =(const Lista<T>& l); // asignación de listas
     void insertar(const T& x, posicion p);
     void eliminar(posicion p);
     const T& elemento(posicion p) const; // acceso a elto, lectura
@@ -46,7 +45,9 @@ private:
 template <typename T>
 void Lista<T>::copiar(const Lista<T> &l)
 {
-    L = new nodo(T()); // crear el nodo cabecera nodo* q = L;
+    L = new nodo(T()); // crear el nodo cabecera
+    nodo* q = L;
+    
     for (nodo* r = l.L->sig; r; r = r->sig)
     {
         q->sig = new nodo(r->elto);
@@ -72,7 +73,7 @@ Lista<T>& Lista<T>::operator =(const Lista<T>& l)
         // evitar autoasignación
         this->~Lista(); // vaciar la lista actual copiar(l);
     }
-    
+
     return *this;
 }
 
@@ -111,13 +112,13 @@ Lista<T>::buscar(const T& x) const
 {
     nodo* q = L;
     bool encontrado = false;
-    
+
     while (q->sig && !encontrado)
         if (q->sig->elto == x)
             encontrado = true;
         else
             q = q->sig;
-    
+
     return q;
 }
 
@@ -135,11 +136,11 @@ typename Lista<T>::posicion
 Lista<T>::anterior(Lista<T>::posicion p) const
 {
     nodo* q;
-    
+
     assert(p != L); // p no es la primera posición
-    
+
     for (q = L; q->sig != p; q = q->sig);
-    
+
     return q;
 }
 
@@ -153,9 +154,9 @@ template <typename T>
 typename Lista<T>::posicion Lista<T>::fin() const
 {
     nodo* p;
-    
+
     for (p = L; p->sig; p = p->sig);
-    
+
     return p;
 }
 
@@ -163,7 +164,7 @@ typename Lista<T>::posicion Lista<T>::fin() const
 template <typename T> Lista<T>::~Lista()
 {
     nodo* q;
-    
+
     while (L)
     {
         q = L->sig;
