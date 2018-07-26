@@ -24,8 +24,8 @@ public:
     typedef nodo* posicion; // posición de un elemento
 
     ListaOrd(); // constructor, requiere ctor. T()
-    ListaOrd(const Lista<T>& l); // ctor. de copia, requiere ctor. T()
-    ListaOrd<T>& operator =(const Lista<T>& l); // asignación entre listas
+    ListaOrd(const ListaOrd<T>& l); // ctor. de copia, requiere ctor. T()
+    ListaOrd<T>& operator =(const ListaOrd<T>& l); // asignación entre listas
     void insertar(const T& x);  //Clave del ejercicio
     void eliminar(posicion p);
     const T& elemento(posicion p) const; // acceso a elto, lectura
@@ -48,12 +48,12 @@ private:
 
     nodo* L; // lista doblemente enlazada de nodos
 
-    void copiar(const Lista<T>& l);
+    void copiar(const ListaOrd<T>& l);
 };
 
 // Método privado
 template <typename T>
-void ListaOrd<T>::copiar(const Lista<T> &l)
+void ListaOrd<T>::copiar(const ListaOrd<T> &l)
 {
     L = new nodo(T()); // crear el nodo cabecera
     L->ant = L->sig = L; // estructura circular
@@ -72,17 +72,17 @@ inline ListaOrd<T>::ListaOrd() : L(new nodo(T())) // crear cabecera
 }
 
 template <typename T>
-inline ListaOrd<T>::ListaOrd(const Lista<T>& l)
+inline ListaOrd<T>::ListaOrd(const ListaOrd<T>& l)
 { copiar(l); }
 
 
 template <typename T>
-ListaOrd<T>& ListaOrd<T>::operator =(const Lista<T>& l)
+ListaOrd<T>& ListaOrd<T>::operator =(const ListaOrd<T>& l)
 {
     if (this != &l)
     {
         // evitar autoasignación
-        this->~Lista(); // vaciar la lista actual
+        this->~ListaOrd(); // vaciar la lista actual
         copiar(l);
     }
 
@@ -95,12 +95,12 @@ void ListaOrd<T>::insertar(const T& x)
     posicion p;
 
     p = primera();
-    
-    while (p -> sig -> elto < x && p->sig != fin() )
+
+    while (p -> sig -> elto < x && p->sig != fin())
     {
         p = p -> sig;
     }
-        
+
     p->sig = p->sig->ant = new nodo(x, p, p->sig);   // el nuevo nodo con x queda en la posición p
 }
 
@@ -183,12 +183,11 @@ ListaOrd<T>::~ListaOrd()
         q = L->sig;
         L->sig = q->sig;
         delete q;
-        cout << 
     }
 
     if(!L)
         delete L;
-    
+
     L = 0;
 }
 
