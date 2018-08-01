@@ -92,16 +92,17 @@ ListaOrd<T>& ListaOrd<T>::operator =(const ListaOrd<T>& l)
 template <typename T> inline
 void ListaOrd<T>::insertar(const T& x)
 {
-    posicion p;
+    ListaOrd<T>::posicion p;
 
-    p = primera();
+    p = this -> primera();
 
-    while (p -> sig -> elto < x && p->sig != fin())
+    while (p -> sig -> elto < x && p != fin())
     {
-        p = p -> sig;
+            p = this -> siguiente(p);
     }
 
-    p->sig = p->sig->ant = new nodo(x, p, p->sig);   // el nuevo nodo con x queda en la posición p
+    p->sig = p->sig->ant = new nodo(x, p, p->sig);
+    // el nuevo nodo con x queda en la posición p
 }
 
 template <typename T>
