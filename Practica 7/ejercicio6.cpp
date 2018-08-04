@@ -18,6 +18,7 @@ using namespace std;
   implementacion del tad lista mediante celdas enlazadas.
 
   Operaciones utilizadas del tad lista:
+  todas
 
   Operaciones del tad Conjunto:
 
@@ -51,6 +52,11 @@ using namespace std;
     los elementos pertenecientes a A, y que ademas no se encuentran en B. En el
     caso de que no existan elementos que cumplan dicha condicion, devuelve el
     conjunto vacio.
+
+  elements()
+    Precondiciones: conjunto no vacio.
+    Postcondiciones: imprime en pantalla todos los elementos del conjunto en el
+    orden en que fueron introducidos.
 */
 
 
@@ -64,6 +70,7 @@ class Conjunto
     Conjunto cUnion(const Conjunto<T>&);
     Conjunto intersect(const Conjunto<T>&);
     Conjunto difference(const Conjunto<T>&);
+    void elements();
 
   private:
     Lista<T> L;
@@ -75,7 +82,7 @@ bool Conjunto<T>::cVoid()
 {
   bool cVoid;
 
-  if(L.primera() -> elemento())
+  if(L.primera() != L.fin())
     cVoid = false;
   else
     cVoid = true;
@@ -88,11 +95,16 @@ void Conjunto<T>::insertElement(const T& e)
 {
     typename Lista<T>::posicion p = L.buscar(e);
 
-    if(p != L.fin())
+    if(p == L.fin())
     {
-      p = L.anterior(L.fin());
+      if(!cVoid())
+      {
+        p = L.anterior(L.fin());
 
-      L.insertar(e, p);
+        L.insertar(e, p);
+      }
+      else
+        L.insertar(e, L.primera());
     }
 }
 
@@ -165,9 +177,26 @@ Conjunto<T> Conjunto<T>::difference(const Conjunto<T>& B)
   return C;
 }
 
+template<typename T>
+void Conjunto<T>::elements()
+{
+  if(!this -> cVoid())
+    {
+      typename Lista<T>::posicion p = L.primera();
+
+      while(p != L.fin())
+      {
+        cout << L.elemento(p) << ' ';
+        p = L.siguiente(p);
+      }
+
+      cout << endl;
+    }
+}
+
 int main()
 {
-  Conjunto<unsigned> A, B, C;
+  Conjunto<unsigned> A, B;
 
   srand(time(NULL));
 
@@ -177,7 +206,11 @@ int main()
     B.insertElement(rand() % 20 + 1);
   }
 
-  C = A.cUnion(B);
+  A.elements();
+  B.elements();
+
+  Conjunto<unsigned> C(A.difference(B));
+  C.elements();
 
   return 0;
 }
