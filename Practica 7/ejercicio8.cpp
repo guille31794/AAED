@@ -1,6 +1,9 @@
 #include <iostream>
 #include "listaDoble.hpp"
 #include <cstdlib>
+#include <cstring>
+
+using namespace std;
 
 /*
   Un numero binario se define como una secuencia de unos y ceros de la forma:
@@ -73,6 +76,11 @@
     el bit menos significativo. Se introducen tantos 0's como desplazamientos
     realizados, empezando por el bit más significativo. Si el desplazamiento es
     mayor a la longitud del binario, este queda convertido a 0.
+
+  Extras:
+
+  printBinary()
+    Postcondicion: muestra por pantalla el contenido del numero binario.
 */
 
 class Binario
@@ -85,20 +93,26 @@ class Binario
     Binario ORExclusivo(const Binario&);
     void Izquierda(const unsigned);
     void Derecha(const unsigned);
+    void printBinary();
 
   private:
     Lista<unsigned> B;
 };
 
-Binario Binario::Binario(const char* str)
+Binario::Binario(const char* str)
 {
   typename Lista<unsigned>::posicion p = B.primera();
 
   for (size_t i = 0; i < strlen(str); i++)
   {
-    if(str[i] == '1' ¦¦ str[i] == '0')
+    if(str[i] == '1')
     {
-      B.insertar((unsigned)str[i], p);
+      B.insertar(1, p);
+      p = B.siguiente(p);
+    }
+    if(str[i] == '0')
+    {
+      B.insertar(0, p);
       p = B.siguiente(p);
     }
   }
@@ -111,7 +125,7 @@ Binario Binario::NOT()
 
   while (p != Bin.B.fin())
   {
-    if(Bin.B.elemento(p))
+    if(Bin.B.elemento(p) == 1)
       Bin.B.elemento(p) = 0;
     else
       Bin.B.elemento(p) = 1;
@@ -124,13 +138,12 @@ Binario Binario::NOT()
 
 Binario Binario::AND(const Binario& B)
 {
-  Binario Bin(*this);
+  Binario Bin("");
   typename Lista<unsigned>::posicion p1 = Bin.B.primera();
   typename Lista<unsigned>::posicion p2 = this -> B.anterior(this -> B.fin());
   typename Lista<unsigned>::posicion p3 = B.B.anterior(B.B.fin());
 
-  while(p2 != this -> B.anterior(this -> B.primera()) &&
-  p3 != B.B.anterior(B.B.primera()))
+  while(p2 != this -> B.primera() && p3 != B.B.primera())
   {
     if(B.B.elemento(p3) == this -> B.elemento(p2) && B.B.elemento(p3) == 1)
       Bin.B.insertar(1, p1);
@@ -139,15 +152,33 @@ Binario Binario::AND(const Binario& B)
 
     p2 = this -> B.anterior(p2);
     p3 = B.B.anterior(p3);
+
+    if(p2 == this -> B.primera() || p3 == B.B.primera())
+      if(this -> B.elemento(p2) == B.B.elemento(p3))
+      {
+        Bin.B.insertar(1, p1);
+        if(p2 != this -> B.primera())
+          p2 = this -> B.anterior(p2);
+        else if(p3 != B.B.primera())
+          p3 = B.B.anterior(p3);
+      }
+      else
+      {
+        Bin.B.insertar(0, p1);
+        if(p2 != this -> B.primera())
+          p2 = this -> B.anterior(p2);
+        else if(p3 != B.B.primera())
+          p3 = B.B.anterior(p3);
+      }
   }
 
-  while(p2 != this -> B.anterior(this -> B.primera()))
+  while(p2 != this -> B.primera())
   {
     Bin.B.insertar(0, p1);
     p2 = this -> B.anterior(p2);
   }
 
-  while(p3 != B.B.anterior(B.B.primera()))
+  while(p3 != B.B.primera())
   {
     Bin.B.insertar(0, p1);
     p3 = B.B.anterior(p3);
@@ -158,24 +189,41 @@ Binario Binario::AND(const Binario& B)
 
 Binario Binario::OR(const Binario& B)
 {
-  Binario Bin(*this);
+  Binario Bin("");
   typename Lista<unsigned>::posicion p1 = Bin.B.primera();
   typename Lista<unsigned>::posicion p2 = this -> B.anterior(this -> B.fin());
   typename Lista<unsigned>::posicion p3 = B.B.anterior(B.B.fin());
 
-  while(p2 != this -> B.anterior(this -> B.primera()) &&
-  p3 != B.B.anterior(B.B.primera()))
+  while(p2 != this -> B.primera() && p3 != B.B.primera())
   {
-    if(B.B.elemento(p3) ¦¦ this -> B.elemento(p2))
+    if(B.B.elemento(p3) || this -> B.elemento(p2))
       Bin.B.insertar(1, p1);
     else
       Bin.B.insertar(0, p1);
 
     p2 = this -> B.anterior(p2);
     p3 = B.B.anterior(p3);
+
+    if(p2 == this -> B.primera() || p3 == B.B.primera())
+      if(this -> B.elemento(p2) || B.B.elemento(p3))
+      {
+        Bin.B.insertar(1, p1);
+        if(p2 != this -> B.primera())
+          p2 = this -> B.anterior(p2);
+        else if(p3 != B.B.primera())
+          p3 = B.B.anterior(p3);
+      }
+      else
+      {
+        Bin.B.insertar(0, p1);
+        if(p2 != this -> B.primera())
+          p2 = this -> B.anterior(p2);
+        else if(p3 != B.B.primera())
+          p3 = B.B.anterior(p3);
+      }
   }
 
-  while(p2 != this -> B.anterior(this -> B.primera()))
+  while(p2 != this -> B.primera())
   {
     if(this -> B.elemento(p2))
       Bin.B.insertar(1, p1);
@@ -183,9 +231,15 @@ Binario Binario::OR(const Binario& B)
       Bin.B.insertar(0, p1);
 
     p2 = this -> B.anterior(p2);
+
+    if(p2 == this -> B.primera())
+      if(this -> B.elemento(p2) == 1)
+        Bin.B.insertar(1, p1);
+      else
+        Bin.B.insertar(0, p1);
   }
 
-  while(p3 != B.B.anterior(B.B.primera()))
+  while(p3 != B.B.primera())
   {
     if(B.B.elemento(p3))
       Bin.B.insertar(1, p1);
@@ -193,6 +247,12 @@ Binario Binario::OR(const Binario& B)
       Bin.B.insertar(0, p1);
 
     p3 = B.B.anterior(p3);
+
+    if(p3 == B.B.primera())
+      if(B.B.elemento(p3) == 1)
+        Bin.B.insertar(1, p1);
+      else
+        Bin.B.insertar(0, p1);
   }
 
   return Bin;
@@ -200,24 +260,41 @@ Binario Binario::OR(const Binario& B)
 
 Binario Binario::ORExclusivo(const Binario& B)
 {
-  Binario Bin(*this);
-  typename Lista<unsigned>::posicion p1 = Bin.B.primera();
+  Binario Bin("");
+  typename Lista<unsigned>::posicion p1 = Bin.B.fin();
   typename Lista<unsigned>::posicion p2 = this -> B.anterior(this -> B.fin());
   typename Lista<unsigned>::posicion p3 = B.B.anterior(B.B.fin());
 
-  while(p2 != this -> B.anterior(this -> B.primera()) &&
-  p3 != B.B.anterior(B.B.primera()))
+  while(p2 != this -> B.primera() && p3 != B.B.primera())
   {
     if(B.B.elemento(p3) == this -> B.elemento(p2))
-      Bin.B.insertar(1, p1);
-    else
       Bin.B.insertar(0, p1);
+    else
+      Bin.B.insertar(1, p1);
 
     p2 = this -> B.anterior(p2);
     p3 = B.B.anterior(p3);
+
+    if(p2 == this -> B.primera() || p3 == B.B.primera())
+      if(this -> B.elemento(p2) == B.B.elemento(p3))
+      {
+        Bin.B.insertar(0, p1);
+        if(p2 != this -> B.primera())
+          p2 = this -> B.anterior(p2);
+        else if(p3 != B.B.primera())
+          p3 = B.B.anterior(p3);
+      }
+      else
+      {
+        Bin.B.insertar(1, p1);
+        if(p2 != this -> B.primera())
+          p2 = this -> B.anterior(p2);
+        else if(p3 != B.B.primera())
+          p3 = B.B.anterior(p3);
+      }
   }
 
-  while(p2 != this -> B.anterior(this -> B.primera()))
+  while(p2 != this -> B.primera())
   {
     if(this -> B.elemento(p2))
       Bin.B.insertar(1, p1);
@@ -225,16 +302,29 @@ Binario Binario::ORExclusivo(const Binario& B)
       Bin.B.insertar(0, p1);
 
     p2 = this -> B.anterior(p2);
+
+    if(p2 == this -> B.primera())
+      if(this -> B.elemento(p2) == 1)
+        Bin.B.insertar(1, p1);
+      else
+        Bin.B.insertar(0, p1);
   }
 
-  while(p3 != B.B.anterior(B.B.primera()))
+
+  while(p3 != B.B.primera())
   {
-    if(B.B.elemento(p3))
+    if(B.B.elemento(p3) == 1)
       Bin.B.insertar(1, p1);
     else
       Bin.B.insertar(0, p1);
 
     p3 = B.B.anterior(p3);
+
+    if(p3 == B.B.primera())
+      if(B.B.elemento(p3) == 1)
+        Bin.B.insertar(1, p1);
+      else
+        Bin.B.insertar(0, p1);
   }
 
   return Bin;
@@ -260,7 +350,7 @@ void Binario::Izquierda(const unsigned n)
 
   p1 = B.anterior(B.fin());
 
-  for(unsigned i = 0; i < n && p1 != B.anterior(B.primera()); ++i)
+  for(unsigned i = 0; i < n && p1 != B.primera(); ++i)
   {
     B.elemento(p1) = 0;
     p1 = B.anterior(p1);
@@ -274,7 +364,7 @@ void Binario::Derecha(const unsigned n)
 
   for(unsigned i = 0; i < n; ++i)
   {
-    while(p2 != B.anterior(B.primera()))
+    while(p2 != B.primera())
     {
       B.elemento(p1) = B.elemento(p2);
       p1 = p2;
@@ -292,4 +382,30 @@ void Binario::Derecha(const unsigned n)
     B.elemento(p1) = 0;
     p1 = B.siguiente(p1);
   }
+}
+
+void Binario::printBinary()
+{
+  typename Lista<unsigned>::posicion p = B.primera();
+
+  for(p; p != B.fin(); p = B.siguiente(p))
+    cout << B.elemento(p);
+
+  cout << endl;
+}
+
+int main()
+{
+  Binario b("10111111111");
+  Binario b2("00000001111");
+
+  b.printBinary();
+  b2.printBinary();
+
+  Binario Bin(b.AND(b2));
+
+  Bin.printBinary();
+
+
+  return 0;
 }
