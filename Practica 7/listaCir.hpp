@@ -22,11 +22,11 @@ template <typename T>
 class Lista
 {
     struct nodo; // declaración adelantada privada
-    
+
 public:
-    
+
     typedef nodo* posicion; // posición de un elemento
-    
+
     Lista(); // constructor, requiere ctor. T()
     Lista(const Lista<T>& l); // ctor. de copia, requiere ctor. T()
     Lista<T>& operator =(const Lista<T>& l); // asignación entre listas
@@ -39,7 +39,7 @@ public:
     posicion anterior(posicion p) const;
     posicion iniPos() const;   //Devuelve una posicion cualquiera de la lista
     ~Lista(); // destructor, ES MUY POSIBLE QUE NO ELIMINE LA CABECERA
-    
+
 private:
     struct nodo
     {
@@ -48,9 +48,9 @@ private:
         nodo(const T& e, nodo* a = 0, nodo* s = 0) :
         elto(e), ant(a), sig(s) {}
     };
-    
+
     nodo* L; // lista doblemente enlazada de nodos
-    
+
     void copiar(const Lista<T>& l);
 };
 
@@ -60,9 +60,9 @@ void Lista<T>::copiar(const Lista<T> &l)
 {
     L = new nodo(T()); // crear el nodo cabecera
     L->ant = L->sig = L; // estructura circular
-    
+
     // Copiar elementos de l
-    
+
     for (nodo* q = l.L->sig; q != l.L; q = q->sig)
         L->ant = L->ant->sig = new nodo(q->elto, L->ant, L);
 }
@@ -87,7 +87,7 @@ Lista<T>& Lista<T>::operator =(const Lista<T>& l)
         this->~Lista(); // vaciar la lista actual
         copiar(l);
     }
-    
+
     return *this;
 }
 
@@ -100,12 +100,23 @@ void Lista<T>::insertar(const T& x, Lista<T>::posicion p)
 template <typename T>
 inline void Lista<T>::eliminar(Lista<T>::posicion p)
 {
-    assert(p->sig != L); // p no es fin
-    
-    nodo* q = p->sig;
-    p->sig = q->sig;
-    p->sig->ant = p;
-    delete q;    // el nodo siguiente queda en la posición p
+    //assert(p->sig != L); // p no es fin
+
+    if(p -> sig != L)
+    {
+        nodo* q = p->sig;
+        p->sig = q->sig;
+        p->sig->ant = p;
+        delete q;    // el nodo siguiente queda en la posición p
+    }
+    else
+    {
+        nodo* q = L->sig;
+        L->sig = q->sig;
+        L->sig->ant = p;
+        delete q;    // el nodo siguiente queda en la posición p
+    }
+
 }
 
 template <typename T> inline
@@ -126,7 +137,7 @@ Lista<T>::buscar(const T& x) const
 {
     nodo*q=L;
     bool encontrado = false;
-    
+
     while (q->sig != L && !encontrado)
         if (q->sig->elto == x)
             encontrado = true;
@@ -138,8 +149,8 @@ template <typename T> inline
 typename Lista<T>::posicion
 Lista<T>::siguiente(Lista<T>::posicion p) const
 {
-    if( p -> sig == L )
-        return p->sig->sig;
+    if( p -> sig == L -> ant )
+        return L;
     else
         return p->sig;
 }
@@ -148,8 +159,8 @@ template <typename T> inline
 typename Lista<T>::posicion
 Lista<T>::anterior(Lista<T>::posicion p) const
 {
-    if(p -> ant == L /*-> ant*/)
-        return p -> ant -> ant;
+    if(p == L)
+        return L -> ant; //p -> ant -> ant;
     else
         return p->ant;
 }
@@ -157,7 +168,10 @@ Lista<T>::anterior(Lista<T>::posicion p) const
 template <typename T>
 inline typename Lista<T>::posicion Lista<T>::iniPos() const
 {
-    return L;
+    if(L != 0)
+        return L;
+    else
+        return POS_NULA;
 }
 
 // Destructor: Vacía la lista y destruye el nodo cabecera
@@ -165,22 +179,17 @@ inline typename Lista<T>::posicion Lista<T>::iniPos() const
 template <typename T>
 Lista<T>::~Lista()
 {
-    nodo* q;
-    
-    if(L)
+    if(L != 0)
     {
+        nodo* q;
         while (L->sig != L)
         {
             q = L->sig;
-        
-            if(q -> sig)
-                L->sig = q->sig;
-            
+            L->sig = q->sig;
             delete q;
         }
-        
-        delete L ;
-        
+
+        delete L;
         L = 0;
     }
 }
