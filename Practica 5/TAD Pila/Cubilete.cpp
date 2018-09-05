@@ -39,7 +39,11 @@ using namespace std;
   Precondicion: recibe una PilaDeCubos con al menos 2 cubos.
   Postcondición: devuelve una PilaDeCubos con los cubos de la pila parametro
   ordenados de mayor a menor.
-*/
+
+  procedimiento pilePrint(PilaDeCubos)
+  Precondicion: parametro PilaDeCubos no vacio.
+  Postcondición: imprime por pantalla la PilaDeCubos.
+  */
 
 class tCubo
 {
