@@ -40,7 +40,7 @@ using namespace std;
   Postcondición: devuelve una PilaDeCubos con los cubos de la pila parametro
   ordenados de mayor a menor.
 
-  procedimiento pilePrint(PilaDeCubos)
+  procedimiento stackPrint(PilaDeCubos)
   Precondicion: parametro PilaDeCubos no vacio.
   Postcondición: imprime por pantalla la PilaDeCubos.
   */
@@ -105,7 +105,7 @@ Pila<tCubo> juego(Pila<tCubo>& P1)
   return P2;
 }
 
-void pilePrint(const Pila<tCubo> P)
+void stackPrint(const Pila<tCubo> P)
 {
   Pila<tCubo> P1(P);
 
@@ -130,9 +130,9 @@ int main()
     ++i;
   }
 
-  pilePrint(P);
+  stackPrint(P);
   Pila<tCubo> P1 = juego(P);
-  pilePrint(P1);
+  stackPrint(P1);
 
   return 0;
 }
