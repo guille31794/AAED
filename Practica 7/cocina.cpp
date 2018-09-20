@@ -85,17 +85,16 @@ class Cocina
 };
 
 Cocina Cocina::Cocina(int t): tam_{t}, libre{t}
-{
-  for(int i=0; i < tam_;++i)
-  {
-    v[i] = 0;
-  }
-}
+{}
 
 bool Cocina::Cabe(Mueble& m) const
 {
   bool cabe = false;
+  Lista<Mueble>::posicion p = L.primera();
 
+  while (L.p) {
+    /* code */
+  }
   if(libre < m.tam())
     cabe = true;
 
@@ -119,7 +118,7 @@ Mueble Cocina::Cocina(int p) const
   }
 }
 
-void Eliminar(int p)
+void Cocina::Eliminar(int p)
 {
   int tamAcum = 0;
   Lista<Mueble>::posicion pos = L.primera();
@@ -136,7 +135,7 @@ void Eliminar(int p)
   }
 }
 
-void Mover(int i)
+void Cocina::Mover(int i)
 {
   int tamAcum = 0;
   Lista<Mueble>::posicion pos = L.primera();
@@ -151,4 +150,12 @@ void Mover(int i)
 
     L.;
   }
+}
+
+Cocina::~Cocina()
+{
+  L.~Lista();
+  delete[] v;
+  tam_ = NULL;
+  libre = NULL;
 }
