@@ -1,5 +1,5 @@
 #include <iostream>
-#include "listaEnla.hpp"
+#include "listaPseudo.hpp"
 
 using namespace std;
 
@@ -15,13 +15,13 @@ using namespace std;
   Cada mueble consta de un tamaño el cual dictará cuantas posiciones ocupa en la
   cocina. Se considera el inicio de un mueble tal como sería su vista de frente,
   cuya primera posicion será su extremo izquierdo y cuya última posición será su
-  extremo derecho.
+  extremo derecho, es decir la suma de su posicion inicial más su anchura.
 
   Cada unidad de tamaño ocupada por un mueble equivale a 1 posicion ocupada de
   la longitud de la cocina.
 
   Para la implementación utilizaré el tad Lista en su representación
-  mediante celdas enlazadas, con todas sus operaciones.
+  psudoestatica, con todas sus operaciones.
 
   Operaciones:
 
@@ -30,24 +30,28 @@ using namespace std;
   En caso de que el tamaño sea 0 o negativo, el la cocina se creará con tamaño 1
   por defecto.
 
-  booleano Cabe(mueble, posicion)
+  booleano Cabe(mueble)
   Precondicion: posicion dentro de la longitud de la cocina.
   Postcondicion: devuelve verdadero si detecta que el mueble introducido como
   parametro cabe en la posicion deseada, o falso en caso contrario.
 
-  Mueble Observador(posicion)
+  procedimiento Aniadir(Mueble)
+  Precondicion: espacio suficiente para aniadir el mueble
+  Postcondicion: aniade el mueble en la posición especificada.
+
+  Mueble Observador(entero)
   Precondicion: posicion dentro de la longitud de la cocina, y mueble existente
   en dicha posicion.
   Postcondicion: devuelve el mueble situado en esa posicion o nada en caso de
   que no exista.
 
-  procedimiento Eliminar(posicion)
+  procedimiento Eliminar(entero)
   Precondicion: posicion dentro de los limites de la cocina, y mueble en dicha
   posicion.
   Postcondicion: elimina el mueble situado en la posicion seleccionada en el
   parametro de entrada, o no hace nada si no existe.
 
-  procedimiento Mover(posicion)
+  procedimiento Mover(entero)
   Precondicion: posicion dentro de los limites de la cocina, y mueble en dicha
   posicion.
   Postcondicion: mueve el mueble de la posicion pasada como parametro hasta
@@ -74,68 +78,85 @@ class Cocina
   public:
     Cocina(int);
     bool Cabe(Mueble&) const;
+    void Aniadir(Mueble&);
     Mueble Observador(int) const;
     void Eliminar(int);
     void Mover(int);
     ~Cocina();
   private:
-    int tam_, libre;
-    int v[tam_];
+    int tam_;
     Lista<Mueble> L;
 };
 
-Cocina Cocina::Cocina(int t): tam_{t}, libre{t}
+Cocina Cocina::Cocina(int t): tam_{t}, L{t}
 {}
 
 bool Cocina::Cabe(Mueble& m) const
 {
-  bool cabe = false;
+  bool cabe = true;
   Lista<Mueble>::posicion p = L.primera();
 
-  while (L.p) {
-    /* code */
+
+  if((m.pos()+m.tam()) < tam_)
+  {
+    for(int i = 0; i < m.tam(); ++i)
+      if(L.elemento(m.pos()+i))
+      {
+        cabe = false;
+      }
   }
-  if(libre < m.tam())
-    cabe = true;
+  else
+    cabe = false;
 
   return cabe;
 }
 
-Mueble Cocina::Cocina(int p) const
+void Cocina::Aniadir(Mueble& m)
 {
-  int tamAcum = 0;
-  Lista<Mueble>::posicion pos = L.primera();
-
-  if(p < tam_ && p >= 0)
-  {
-    while (tamAcum < p)
-    {
-      tamAcum += L.elemento(p).tam();
-      p = L.siguiente(p);
-    }
-
-    return L.elemento(p);
-  }
+  
 }
 
-void Cocina::Eliminar(int p)
+Mueble Cocina::Cocina(int nMueble) const
 {
-  int tamAcum = 0;
   Lista<Mueble>::posicion pos = L.primera();
+  int contador = 0;
 
-  if(p < tam_ && p >= 0)
+  while (contador < nMueble && pos < tam_)
   {
-    while (tamAcum < p)
+    if(L.elemento(pos))
     {
-      tamAcum += L.elemento(p).tam();
-      p = L.siguiente(p);
+      pos = pos + L.elemento(pos).tam();
+      ++contador;
     }
-
-    L.eliminar(p);
+    else
+      pos = L.siguiente(pos);
   }
+
+  if(contador == nMueble)
+    return L.elemento(pos);
 }
 
-void Cocina::Mover(int i)
+void Cocina::Eliminar(int nMueble)
+{
+  Lista<Mueble>::posicion pos = L.primera();
+  int contador = 0;
+
+  while (contador < nMueble && pos < tam_)
+  {
+    if(L.elemento(pos))
+    {
+      pos = pos + L.elemento(pos).tam();
+      ++contador;
+    }
+    else
+      pos = L.siguiente(pos);
+  }
+
+  if(contador == nMueble)
+    L.eliminar(pos);
+}
+
+/*void Cocina::Mover(int i)
 {
   int tamAcum = 0;
   Lista<Mueble>::posicion pos = L.primera();
@@ -150,12 +171,10 @@ void Cocina::Mover(int i)
 
     L.;
   }
-}
+}*/
 
 Cocina::~Cocina()
 {
   L.~Lista();
-  delete[] v;
   tam_ = NULL;
-  libre = NULL;
 }
