@@ -62,7 +62,7 @@ using namespace std;
   Postcondicion: elimina la cocina con todos sus muebles.
 */
 
-class Mueble()
+class Mueble
 {
   public:
     Mueble(int t = 1): tam_{t} {}
@@ -88,7 +88,7 @@ class Cocina
     Lista<Mueble> L;
 };
 
-Cocina Cocina::Cocina(int t): tam_{t}, L{t}
+Cocina::Cocina(int t): tam_{t}, L{Lista<Mueble>(t)}
 {}
 
 bool Cocina::Cabe(Mueble& m) const
@@ -100,7 +100,7 @@ bool Cocina::Cabe(Mueble& m) const
   if((m.pos()+m.tam()) < tam_)
   {
     for(int i = 0; i < m.tam(); ++i)
-      if(L.elemento(m.pos()+i))
+      if(L.elemento(m.pos()+i).tam() != 0)
       {
         cabe = false;
       }
@@ -113,17 +113,18 @@ bool Cocina::Cabe(Mueble& m) const
 
 void Cocina::Aniadir(Mueble& m)
 {
-  
+  if(Cabe(m))
+    L.insertar(m, m.pos());
 }
 
-Mueble Cocina::Cocina(int nMueble) const
+Mueble Cocina::Observador(int nMueble) const
 {
   Lista<Mueble>::posicion pos = L.primera();
   int contador = 0;
 
   while (contador < nMueble && pos < tam_)
   {
-    if(L.elemento(pos))
+    if(L.elemento(pos).tam() != 0)
     {
       pos = pos + L.elemento(pos).tam();
       ++contador;
@@ -143,7 +144,7 @@ void Cocina::Eliminar(int nMueble)
 
   while (contador < nMueble && pos < tam_)
   {
-    if(L.elemento(pos))
+    if(L.elemento(pos).tam() != 0)
     {
       pos = pos + L.elemento(pos).tam();
       ++contador;
@@ -176,5 +177,10 @@ void Cocina::Eliminar(int nMueble)
 Cocina::~Cocina()
 {
   L.~Lista();
-  tam_ = NULL;
+  tam_ = 0;
+}
+
+int main(int argc, char const *argv[]) {
+
+  return 0;
 }

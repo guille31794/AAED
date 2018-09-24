@@ -17,11 +17,11 @@ class Lista
     T *elementos; // vector de elementos
     int Lmax; // tamaño del vector
     int n; // longitud de la lista
-    
+
     public:
-    
+
     typedef int posicion;   // posición de un elto
-    
+
     explicit Lista(size_t TamaMax); // constructor
     Lista(const Lista<T>& l); // ctor. de copia
     Lista<T>& operator =(const Lista<T>& l); // asignación entre listas
@@ -35,7 +35,7 @@ class Lista
     posicion primera() const;
     posicion fin() const; // posición después del último
     ~Lista(); // destructor
-}
+};
 
 //clase Lista genérica: vector pseudo−estático.
 //Una lista de longitud n se almacena en celdas consecutivas del vector, desde 0 hasta n−1.
@@ -68,18 +68,18 @@ Lista<T>& Lista<T>::operator =(const Lista<T>& l)
     {
         // evitar autoasignación
         // Destruir el vector y crear uno nuevo si es necesario
-        
+
         if (Lmax != l.Lmax)
         {
             delete[] elementos;
             Lmax = l.Lmax;
             elementos = new T[Lmax];
         }
-        
+
         // Copiar el vector
-        
+
         n=l.n;
-        
+
         for (Lista<T>::posicion p = 0; p < n; p++)
             elementos[p] = l.elementos[p];
     }
@@ -91,15 +91,15 @@ void Lista<T>::insertar(const T& x, Lista<T>::posicion p)
 {
     assert(p >= 0 && p <= n); // posición válida
     assert(n < Lmax); // lista no llena
-    
+
     for (Lista<T>::posicion q = n; q > p; q--)
     {
         // desplazar los eltos. en p, p+1, ...
-        
+
         elementos[q] = elementos[q-1]; // a la siguiente posición
         elementos[p] = x;
     }
-    
+
     n++;
 }
 
@@ -107,9 +107,9 @@ template <typename T>
 void Lista<T>::eliminar(Lista<T>::posicion p)
 {
     assert(p >= 0 && p < n); // posición válida
-    
+
     n--;
-    
+
     for (Lista<T>::posicion q = p; q < n; q++)
         //desplazar los eltos. en p+1, p+2, ...
         elementos[q] = elementos[q+1]; // a la posición anterior
@@ -135,13 +135,13 @@ const
 {
     Lista<T>::posicion q = 0;
     bool encontrado = false;
-    
+
     while (q < n && !encontrado)
         if (elementos[q] == x)
             encontrado = true;
         else
             q++;
-    
+
     return q;
 }
 
