@@ -67,7 +67,7 @@ class Mueble
   public:
     Mueble(int t = 1): tam_{t} {}
     int tam() const {return tam_;}
-    int pos() {return pos_;}
+    int& pos() {return pos_;}
   private:
     int tam_;
     int pos_;
@@ -157,22 +157,25 @@ void Cocina::Eliminar(int nMueble)
     L.eliminar(pos);
 }
 
-/*void Cocina::Mover(int i)
+void Cocina::Mover(int i)
 {
-  int tamAcum = 0;
-  Lista<Mueble>::posicion pos = L.primera();
-
-  if(p < tam_ && p >= 0)
-  {
-    while (tamAcum < p)
+  Mueble muebleAMover = Observador(i);
+  Mueble muebleDeReferencia = Observador(i-1);
+  if(i > 1)
+    if(muebleAMover.tam() != 0 && muebleDeReferencia.tam() != 0)
     {
-      tamAcum += L.elemento(p).tam();
-      p = L.siguiente(p);
+      Eliminar(i);
+      muebleAMover.pos() = muebleDeReferencia.pos() + muebleDeReferencia.tam() + 1;
+      Aniadir(muebleAMover);
     }
-
-    L.;
+  else
+    if(muebleAMover.tam() != 0)
+    {
+      Eliminar(i);
+      muebleAMover.pos() = 0;
+      Aniadir(muebleAMover);
+    }
   }
-}*/
 
 Cocina::~Cocina()
 {
