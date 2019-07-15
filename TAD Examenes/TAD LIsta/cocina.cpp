@@ -1,5 +1,5 @@
 #include <iostream>
-#include "listaPseudo.hpp"
+#include <vector>
 
 using namespace std;
 
@@ -65,18 +65,17 @@ using namespace std;
 class Mueble
 {
   public:
-    Mueble(int t = 1): tam_{t} {}
-    int tam() const {return tam_;}
-    int& pos() {return pos_;}
+    Mueble(double wide, double rp): wide_{wide}, pos_{rp} {}
+    int wide() const {return wide_;}
+    double pos() {return pos_;}
   private:
-    int tam_;
-    int pos_;
+    double wide_, pos_;
 };
 
 class Cocina
 {
   public:
-    Cocina(int);
+    Cocina(double);
     bool Cabe(Mueble&) const;
     void Aniadir(Mueble&);
     Mueble Observador(int) const;
@@ -84,26 +83,24 @@ class Cocina
     void Mover(int);
     ~Cocina();
   private:
-    int tam_;
-    Lista<Mueble> L;
+    double free_;
+    vector<Mueble> v;
 };
 
-Cocina::Cocina(int t): tam_{t}, L{Lista<Mueble>(t)}
-{}
+Cocina::Cocina(double t): free_{t}, v{vector<Mueble>{}}
+{
+  if(free_ < 0.0)
+    free_ = 0.0;
+}
 
 bool Cocina::Cabe(Mueble& m) const
 {
   bool cabe = true;
-  Lista<Mueble>::posicion p = L.primera();
 
-
-  if((m.pos()+m.tam()) < tam_)
+  if((m.pos()+m.wide()) < free_)
   {
-    for(int i = 0; i < m.tam(); ++i)
-      if(L.elemento(m.pos()+i).tam() != 0)
-      {
-        cabe = false;
-      }
+    for(auto muebles : v)
+      if(muebles.pos)
   }
   else
     cabe = false;
@@ -114,27 +111,15 @@ bool Cocina::Cabe(Mueble& m) const
 void Cocina::Aniadir(Mueble& m)
 {
   if(Cabe(m))
-    L.insertar(m, m.pos());
+    v.push_back(m);
 }
 
 Mueble Cocina::Observador(int nMueble) const
 {
-  Lista<Mueble>::posicion pos = L.primera();
-  int contador = 0;
-
-  while (contador < nMueble && pos < tam_)
-  {
-    if(L.elemento(pos).tam() != 0)
-    {
-      pos = pos + L.elemento(pos).tam();
-      ++contador;
-    }
-    else
-      pos = L.siguiente(pos);
-  }
-
-  if(contador == nMueble)
-    return L.elemento(pos);
+  if(v.size() >= nMueble)
+    return v.at(nMueble);
+  else
+    return Mueble{0.0, 0.0};
 }
 
 void Cocina::Eliminar(int nMueble)
@@ -179,8 +164,8 @@ void Cocina::Mover(int i)
 
 Cocina::~Cocina()
 {
-  L.~Lista();
-  tam_ = 0;
+  v.clear();
+  free_ = 0;
 }
 
 int main(int argc, char const *argv[]) {
