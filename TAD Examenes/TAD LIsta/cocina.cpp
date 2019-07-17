@@ -6,26 +6,26 @@ using namespace std;
 /*
   Una cocina hace referencia a la longitud de la pared de una habitación
   cualquiera, la cual será utilizada para cocinar alimentos y será necesario
-  amueblar para poder lograr tal fin.
+  amueblar para poder lograr tal fin. La cocina tiene un tamaño libre que es
+  posible amueblar, aunque este pueda ser discontinuo.
 
   En la cocina los muebles podrán ir separados o pegados y colocados a lo largo
   de toda la longitud de la cocina hasta agotar la misma y no quedar más espacio
   libre.
 
-  Cada mueble consta de un tamaño el cual dictará cuantas posiciones ocupa en la
-  cocina. Se considera el inicio de un mueble tal como sería su vista de frente,
-  cuya primera posicion será su extremo izquierdo y cuya última posición será su
-  extremo derecho, es decir la suma de su posicion inicial más su anchura.
+  Cada mueble consta de un tamaño y una posición. Se considera el inicio de un mueble 
+  tal como sería su vista de frente, cuya posicion será su extremo izquierdo y la distancia 
+  que lo separa de la pared y la posicion más el extremo derecho, serán el espacio que ocupa.
 
-  Cada unidad de tamaño ocupada por un mueble equivale a 1 posicion ocupada de
-  la longitud de la cocina.
+  La posición conceptual de un mueble en la cocina no tiene nada que ver con su posición ordinal
+  dentro de la estructura de datos empleada.
 
-  Para la implementación utilizaré el tad Lista en su representación
-  psudoestatica, con todas sus operaciones.
+  Para la implementación utilizaré una estructura vectorial, que me permitira el acceso a las 
+  posiciones i-esimas en orden constante.
 
   Operaciones:
 
-  Cocina(entero)
+  Cocina(double)
   Postcondicion: crea una cocina vacía del tamaño introducido como parametro.
   En caso de que el tamaño sea 0 o negativo, el la cocina se creará con tamaño 1
   por defecto.
