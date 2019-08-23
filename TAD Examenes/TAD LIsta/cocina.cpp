@@ -100,7 +100,12 @@ bool Cocina::Cabe(Mueble& m) const
   if((m.pos()+m.wide()) < free_)
   {
     for(auto muebles : v)
-      if(muebles.pos)
+      if(muebles.pos() <= m.pos() && 
+      muebles.pos()+muebles.wide() >= m.pos())
+        cabe = false;
+      else if(m.pos()+m.wide() >= muebles.pos() &&
+      m.pos()+m.wide() <= muebles.pos()+muebles.wide())
+        cabe = false;
   }
   else
     cabe = false;
@@ -124,42 +129,24 @@ Mueble Cocina::Observador(int nMueble) const
 
 void Cocina::Eliminar(int nMueble)
 {
-  Lista<Mueble>::posicion pos = L.primera();
-  int contador = 0;
-
-  while (contador < nMueble && pos < tam_)
-  {
-    if(L.elemento(pos).tam() != 0)
-    {
-      pos = pos + L.elemento(pos).tam();
-      ++contador;
-    }
-    else
-      pos = L.siguiente(pos);
-  }
-
-  if(contador == nMueble)
-    L.eliminar(pos);
+  if(v.size() > nMueble)
+    v.erase(v.begin()+nMueble-1);
 }
 
+//No recuerdo el enunciado y no puedo acabarla
 void Cocina::Mover(int i)
 {
-  Mueble muebleAMover = Observador(i);
-  Mueble muebleDeReferencia = Observador(i-1);
-  if(i > 1)
-    if(muebleAMover.tam() != 0 && muebleDeReferencia.tam() != 0)
+  Mueble muebleAMover{Observador(i)};
+  if(!muebleAMover.pos() && !muebleAMover.wide())
+  {
+    Mueble muebleDeReferencia{Observador(i-1)};
+
+    if (!muebleDeReferencia.pos() && !muebleDeReferencia.wide())
     {
-      Eliminar(i);
-      muebleAMover.pos() = muebleDeReferencia.pos() + muebleDeReferencia.tam() + 1;
-      Aniadir(muebleAMover);
+      
     }
-  else
-    if(muebleAMover.tam() != 0)
-    {
-      Eliminar(i);
-      muebleAMover.pos() = 0;
-      Aniadir(muebleAMover);
-    }
+    
+  }
   }
 
 Cocina::~Cocina()
